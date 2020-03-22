@@ -69,10 +69,17 @@ const parseQueryHash = <T extends unknown>() => {
 };
 
 const App = () => {
-  const queryHash = parseQueryHash<AppQueryHash>();
-  const distance = queryHash.distance ? parseInt(queryHash.distance) : 50;
+  const [distance, setDistance] = useState<number>(50);
   const [shops, setShops] = useState<ShopData[]>([]);
   useEffect(() => {
+    const updateDistance = () => {
+      const queryHash = parseQueryHash<AppQueryHash>();
+      const newDistance = queryHash.distance ? parseInt(queryHash.distance) : 50;
+      setDistance(newDistance);
+    };
+    window.addEventListener('hashchange', () => updateDistance());
+    updateDistance();
+
     (async () => {
       var data = await fetch('/shops.json');
       var json = await data.json();
